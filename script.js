@@ -29,10 +29,22 @@ async function handleClick() {
 
 async function saveScore() {
   try {
-    await fetch(`${DB_URL}/scores/${userId}.json`, {
+    // Получаем username или имя из Telegram
+    let username = 'player_' + userId;
+    if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+      const user = window.Telegram.WebApp.initDataUnsafe.user;
+      username = user.username || (user.first_name || 'Player') + (user.last_name ? ' ' + user.last_name : '');
+    }
+
+    const payload = {
+      score: score,
+      username: username
+    };
+
+    await fetch(`${DB_URL}/leaderboard/${userId}.json`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(score)
+      body: JSON.stringify(payload)
     });
   } catch (e) {
     console.error('Save error:', e);
@@ -54,12 +66,16 @@ async function loadScore() {
 
 async function updateLeaderboard() {
   try {
-    const res = await fetch(`${DB_URL}/scores.json`);
+    const res = await fetch(`${DB_URL}/leaderboard.json`);
     const data = await res.json();
     if (!data) return;
 
     const leaderboard = Object.entries(data)
-      .map(([id, s]) => ({ id, score: s }))
+      .map(([id, info]) => ({
+        id,
+        score: info.score,
+        username: info.username || 'Anonymous'
+      }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 5);
 
@@ -67,7 +83,7 @@ async function updateLeaderboard() {
     topList.innerHTML = leaderboard.map((p, i) => `
       <div class="leader-item">
         <span>${i + 1}.</span>
-        <span>User ${p.id}</span>
+        <span>@${p.username}</span>
         <span>${p.score}</span>
       </div>
     `).join('');
@@ -82,3 +98,4 @@ function showMessage(text) {
   el.style.opacity = '1';
   setTimeout(() => el.style.opacity = '0', 800);
 }
+
