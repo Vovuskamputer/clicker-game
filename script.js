@@ -1,31 +1,24 @@
 // === Supabase config ===
 const SUPABASE_URL = 'https://loawlpgljlpsqewrrpdg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_0WOm9ARF2YOOGwHZUIsmmg_zyIBHh8N';
+
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// === Получаем Telegram User ID ===
-let userId = null;
-if (window.Telegram?.WebApp?.initDataUnsafe?.user?.id) {
-  userId = String(Telegram.WebApp.initDataUnsafe.user.id);
-} else {
-  userId = localStorage.getItem('telegramUserId');
-  if (!userId) {
-    userId = prompt("Введите ваш Telegram User ID:");
-    if (userId && /^\d+$/.test(userId)) {
-      localStorage.setItem('telegramUserId', userId);
-    } else {
-      alert("Неверный ID");
-      throw new Error("No ID");
-    }
+let userId = localStorage.getItem('telegramUserId');
+if (!userId) {
+  userId = prompt("Введите ваш Telegram User ID:");
+  if (userId && /^\d+$/.test(userId)) {
+    localStorage.setItem('telegramUserId', userId);
+  } else {
+    alert("Неверный ID");
+    throw new Error("No ID");
   }
 }
 
-// === Состояние ===
 let localScore = 0;
 let isEnded = false;
 let perClick = 1;
 
-// === Показ статуса ===
 function showStatus(msg, sec = 2) {
   let el = document.getElementById('status');
   if (!el) {
@@ -39,21 +32,15 @@ function showStatus(msg, sec = 2) {
   setTimeout(() => el.style.display = 'none', sec * 1000);
 }
 
-// === Загрузка игры ===
 async function loadGame() {
   try {
-    // Настройки
-    const { data: settings, error: err1 } = await supabase.from('game_settings').select('key, value');
-    if (err1) throw err1;
-
+    const { data: settings } = await supabase.from('game_settings').select('key, value');
     const cfg = {};
     settings.forEach(r => cfg[r.key] = r.value);
 
-    // Проверка окончания
     const endTime = new Date(cfg.end_datetime);
     isEnded = new Date() >= endTime;
 
-    // Применяем стиль
     document.body.style.backgroundColor = cfg.bg_color || '#f9f9f9';
     document.body.style.color = cfg.text_color || '#000';
     document.getElementById('game-title').textContent = cfg.title || 'Кликер';
@@ -62,18 +49,15 @@ async function loadGame() {
     document.getElementById('click-btn').style.backgroundColor = cfg.btn_color || '#ccc';
     perClick = parseInt(cfg.score_per_click) || 1;
 
-    // Лидеры
-    const { data: leaders, error: err2 } = await supabase
+    const { data: leaders } = await supabase
       .from('scores')
       .select('user_id, score')
       .order('score', { ascending: false })
       .limit(10);
-    if (err2) throw err2;
 
     document.getElementById('leaders-list').innerHTML = 
       leaders.map((l, i) => `<div>${i+1}. ID: ${l.user_id} — ${l.score}</div>`).join('');
 
-    // Скрыть загрузку
     document.getElementById('loading').style.display = 'none';
     document.getElementById('game').style.display = 'block';
 
@@ -84,8 +68,7 @@ async function loadGame() {
       document.getElementById('active-area').style.display = 'block';
       document.getElementById('ended').style.display = 'none';
 
-      // Загружаем свой счёт
-      const { data: myScore, error: err3 } = await supabase
+      const { data: myScore } = await supabase
         .from('scores')
         .select('score')
         .eq('user_id', userId)
@@ -101,23 +84,16 @@ async function loadGame() {
   }
 }
 
-// === Клик ===
 async function handleClick() {
   if (isEnded || !userId) return;
-
   localScore += perClick;
   document.getElementById('score').textContent = `Очки: ${localScore}`;
   showStatus(`+${perClick}`);
-
-  // Сохраняем
-  const { error } = await supabase
+  await supabase
     .from('scores')
     .upsert({ user_id: BigInt(userId), score: localScore }, { onConflict: 'user_id' });
-
-  if (error) console.error("Save failed", error);
 }
 
-// === Запуск ===
 document.getElementById('click-btn').onclick = handleClick;
 loadGame();
-setInterval(loadGame, 10000); // обновление каждые 10 сек
+setInterval(loadGame, 10000);
