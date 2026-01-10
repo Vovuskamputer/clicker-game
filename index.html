@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Simple Clicker</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script> <!-- ЭТО ОБЯЗАТЕЛЬНО! -->
+  <title id="pageTitle">Clicker</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="options.js"></script> <!-- ДО script.js -->
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Click Me!</h1>
-    <div class="score">Score: <span id="score">0</span></div>
+    <h1 id="gameTitle">Click Me!</h1>
+    <div class="score"><span id="scorePrefix">Score:</span> <span id="score">0</span></div>
     <button id="clickBtn">CLICK</button>
+    
+    <!-- Блок улучшений -->
+    <div class="upgrades" id="upgrades"></div>
+
     <div class="message" id="message"></div>
 
-    <!-- НОВОЕ: Лидерборд -->
     <div class="leaderboard">
-      <h3>🏆 Top Players</h3>
+      <h3 id="leaderboardTitle">🏆 Top Players</h3>
       <div id="topList"></div>
     </div>
   </div>
@@ -24,4 +28,5 @@
 </body>
 
 </html>
+
 
