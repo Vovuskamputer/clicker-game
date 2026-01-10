@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Кликер</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="loading">Загрузка...</div>
+
+  <div id="game" style="display:none;">
+    <h1 id="game-title">...</h1>
+    <p id="game-desc">...</p>
+
+    <div id="active-area" style="display:none;">
+      <div id="score">Очки: 0</div>
+      <button id="click-btn">...</button>
+    </div>
+
+    <div id="ended" style="display:none; color: red;">
+      🕒 Конкурс завершён!<br>Ожидайте результатов.
+    </div>
+
+    <div id="leaderboard">
+      <h3>Таблица лидеров:</h3>
+      <div id="leaders-list"></div>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
