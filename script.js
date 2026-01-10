@@ -1,6 +1,6 @@
 // === Supabase config ===
-const SUPABASE_URL = 'https://ВАШ_ПРОЕКТ.supabase.co';
-const SUPABASE_KEY = 'ВАШ_ANON_KEY';
+const SUPABASE_URL = 'https://loawlpgljlpsqewrrpdg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_0WOm9ARF2YOOGwHZUIsmmg_zyIBHh8N';
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // === Получаем Telegram User ID ===
