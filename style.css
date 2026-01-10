@@ -63,4 +63,34 @@ h1 {
   height: 1.2rem;
   opacity: 0;
   transition: opacity 0.3s;
+
+}
+
+.leaderboard {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  width: 100%;
+}
+
+.leaderboard h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+}
+
+#topList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.leader-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0.6rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  font-size: 0.95rem;
 }
