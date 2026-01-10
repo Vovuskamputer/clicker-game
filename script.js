@@ -1,41 +1,48 @@
 const DB_URL = 'https://strrent-game-bot-default-rtdb.firebaseio.com';
 let userId = null;
-let username = 'Player';
+let username = 'Anonymous';
 let score = 0;
 const ADMIN_ID = '1021907470';
 
-// === НАСТОЯЩАЯ ИНИЦИАЛИЗАЦИЯ TELEGRAM MINI APP ===
 function initTelegram() {
-  if (window.Telegram && window.Telegram.WebApp) {
+  if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
     const WebApp = window.Telegram.WebApp;
-    WebApp.ready(); // Говорим Telegram: "я готов"
-    
-    // Принудительно расширяем до полного экрана (рекомендуется)
+    WebApp.ready();
     WebApp.expand();
-    
-    // Получаем данные пользователя
+
+    // КРИТИЧЕСКИ ВАЖНО: ждём, пока данные прогрузятся
+    const initData = WebApp.initData || '';
     const user = WebApp.initDataUnsafe?.user;
-    if (user) {
+
+    if (user && user.id) {
       userId = String(user.id);
-      username = user.username || (user.first_name || 'Player') + (user.last_name ? ' ' + user.last_name : '');
+      username = user.username || 
+                 (user.first_name ? (user.first_name + (user.last_name ? ' ' + user.last_name : '')) : 'Player');
       return true;
+    } else {
+      console.error('❌ Telegram user data missing!', { initData, unsafe: WebApp.initDataUnsafe });
+      return false;
     }
   }
   return false;
 }
 
-// === ЗАГРУЗКА ===
 window.addEventListener('load', async () => {
   const isTelegram = initTelegram();
 
   if (!isTelegram) {
-    // Только для локального теста — НИКОГДА не использовать в продакшене
-    userId = localStorage.getItem('tempUserId') || 'temp_' + Date.now();
-    username = 'Test User';
-    localStorage.setItem('tempUserId', userId);
+    // ❌ Аварийный режим: показываем ошибку вместо игры
+    document.body.innerHTML = `
+      <div style="padding:2rem; text-align:center; color:white; background:#ff4d4d">
+        <h2>🚫 Ошибка запуска</h2>
+        <p>Эту игру можно запускать ТОЛЬКО через Telegram Mini App!</p>
+        <p>Откройте её из бота.</p>
+      </div>
+    `;
+    return;
   }
 
-  console.log('User ID:', userId, 'Username:', username);
+  console.log('✅ User:', { id: userId, name: username });
 
   await loadScore();
   await updateLeaderboard();
@@ -47,7 +54,7 @@ window.addEventListener('load', async () => {
   }
 });
 
-// === ОСТАЛЬНОЙ КОД БЕЗ ИЗМЕНЕНИЙ ===
+// ... остальной код БЕЗ ИЗМЕНЕНИЙ ...
 async function handleClick() {
   score++;
   document.getElementById('score').textContent = score;
