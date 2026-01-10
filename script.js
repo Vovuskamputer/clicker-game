@@ -1,30 +1,53 @@
 const DB_URL = 'https://strrent-game-bot-default-rtdb.firebaseio.com';
 let userId = null;
+let username = 'Player';
 let score = 0;
-const ADMIN_ID = '1021907470'; // ← твой ID
+const ADMIN_ID = '1021907470';
 
+// === НАСТОЯЩАЯ ИНИЦИАЛИЗАЦИЯ TELEGRAM MINI APP ===
+function initTelegram() {
+  if (window.Telegram && window.Telegram.WebApp) {
+    const WebApp = window.Telegram.WebApp;
+    WebApp.ready(); // Говорим Telegram: "я готов"
+    
+    // Принудительно расширяем до полного экрана (рекомендуется)
+    WebApp.expand();
+    
+    // Получаем данные пользователя
+    const user = WebApp.initDataUnsafe?.user;
+    if (user) {
+      userId = String(user.id);
+      username = user.username || (user.first_name || 'Player') + (user.last_name ? ' ' + user.last_name : '');
+      return true;
+    }
+  }
+  return false;
+}
+
+// === ЗАГРУЗКА ===
 window.addEventListener('load', async () => {
-  // Получаем данные пользователя из Telegram Mini App
-  if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-    const user = window.Telegram.WebApp.initDataUnsafe.user;
-    userId = String(user.id);
-  } else {
-    // Для локального теста — временный ID
+  const isTelegram = initTelegram();
+
+  if (!isTelegram) {
+    // Только для локального теста — НИКОГДА не использовать в продакшене
     userId = localStorage.getItem('tempUserId') || 'temp_' + Date.now();
+    username = 'Test User';
     localStorage.setItem('tempUserId', userId);
   }
+
+  console.log('User ID:', userId, 'Username:', username);
 
   await loadScore();
   await updateLeaderboard();
 
   document.getElementById('clickBtn').addEventListener('click', handleClick);
 
-  // Показываем кнопку очистки ТОЛЬКО админу
   if (userId === ADMIN_ID) {
     showAdminPanel();
   }
 });
 
+// === ОСТАЛЬНОЙ КОД БЕЗ ИЗМЕНЕНИЙ ===
 async function handleClick() {
   score++;
   document.getElementById('score').textContent = score;
@@ -35,12 +58,6 @@ async function handleClick() {
 
 async function saveScore() {
   try {
-    let username = 'Player';
-    if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-      const user = window.Telegram.WebApp.initDataUnsafe.user;
-      username = user.username || (user.first_name || 'Player') + (user.last_name ? ' ' + user.last_name : '');
-    }
-
     await fetch(`${DB_URL}/leaderboard/${userId}.json`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -60,7 +77,7 @@ async function loadScore() {
       document.getElementById('score').textContent = score;
     }
   } catch (e) {
-    console.log('No saved data:', e);
+    console.log('No saved score:', e);
   }
 }
 
@@ -99,7 +116,6 @@ function showMessage(text) {
   setTimeout(() => el.style.opacity = '0', 800);
 }
 
-// === АДМИНКА ===
 function showAdminPanel() {
   const container = document.querySelector('.container');
   const adminBtn = document.createElement('button');
@@ -120,17 +136,15 @@ function showAdminPanel() {
 }
 
 async function clearAllScores() {
-  if (confirm('⚠️ Точно удалить ВСЕ данные? Это нельзя отменить!')) {
+  if (confirm('⚠️ Удалить ВСЕ данные?')) {
     try {
-      await fetch(`${DB_URL}/leaderboard.json`, {
-        method: 'DELETE'
-      });
+      await fetch(`${DB_URL}/leaderboard.json`, { method: 'DELETE' });
       score = 0;
       document.getElementById('score').textContent = '0';
       await updateLeaderboard();
       showMessage('✅ Очищено!');
     } catch (e) {
-      alert('Ошибка при очистке');
+      alert('Ошибка');
       console.error(e);
     }
   }
