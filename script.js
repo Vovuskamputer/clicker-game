@@ -1,5 +1,5 @@
 // === ВСТАВЬ СЮДА СВОЙ APPS SCRIPT URL ПОЗЖЕ ===
-const API_URL = "https://script.google.com/macros/s/YOUR_DEPLOY_ID/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzFz77-x2BvbJcxa78kRJfxowzf_YGTcfFiCcelWa9XvmwxNRAVnbcQjRzA8n7lY-q3/exec";
 
 // Получение Telegram User ID
 let userId = localStorage.getItem('telegramUserId');
