@@ -1,69 +1,57 @@
+// === КОНФИГ ===
 const DB_URL = 'https://strrent-game-bot-default-rtdb.firebaseio.com';
-let userId = null;
-let username = 'Anonymous';
-let score = 0;
 const ADMIN_ID = '1021907470';
 
-function initTelegram() {
-  if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
-    const WebApp = window.Telegram.WebApp;
-    WebApp.ready();
-    WebApp.expand();
+// === ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ===
+let userId = null;
+let username = 'Player';
+let score = 0;
 
-    // КРИТИЧЕСКИ ВАЖНО: ждём, пока данные прогрузятся
-    const initData = WebApp.initData || '';
-    const user = WebApp.initDataUnsafe?.user;
-
-    if (user && user.id) {
-      userId = String(user.id);
-      username = user.username || 
-                 (user.first_name ? (user.first_name + (user.last_name ? ' ' + user.last_name : '')) : 'Player');
-      return true;
-    } else {
-      console.error('❌ Telegram user data missing!', { initData, unsafe: WebApp.initDataUnsafe });
-      return false;
-    }
-  }
-  return false;
-}
-
-window.addEventListener('load', async () => {
-  const isTelegram = initTelegram();
-
-  if (!isTelegram) {
-    // ❌ Аварийный режим: показываем ошибку вместо игры
-    document.body.innerHTML = `
-      <div style="padding:2rem; text-align:center; color:white; background:#ff4d4d">
-        <h2>🚫 Ошибка запуска</h2>
-        <p>Эту игру можно запускать ТОЛЬКО через Telegram Mini App!</p>
-        <p>Откройте её из бота.</p>
-      </div>
-    `;
+// === ИНИЦИАЛИЗАЦИЯ ===
+(async () => {
+  // Проверяем: запущено ли в Telegram?
+  if (!window.Telegram || !window.Telegram.WebApp) {
+    showError();
     return;
   }
 
-  console.log('✅ User:', { id: userId, name: username });
+  const WebApp = window.Telegram.WebApp;
+  WebApp.ready();
+  WebApp.expand();
 
+  // Получаем пользователя — ОБЯЗАТЕЛЬНО через initDataUnsafe.user
+  const user = WebApp.initDataUnsafe?.user;
+  if (!user || !user.id) {
+    showError();
+    return;
+  }
+
+  userId = String(user.id);
+  username = user.username || (user.first_name || 'Player') + (user.last_name ? ' ' + user.last_name : '');
+
+  // Загружаем данные
   await loadScore();
   await updateLeaderboard();
 
+  // Вешаем клик
   document.getElementById('clickBtn').addEventListener('click', handleClick);
 
+  // Кнопка админа — ТОЛЬКО тебе
   if (userId === ADMIN_ID) {
-    showAdminPanel();
+    addAdminButton();
   }
-});
+})();
 
-// ... остальной код БЕЗ ИЗМЕНЕНИЙ ...
+// === ОСНОВНЫЕ ФУНКЦИИ ===
 async function handleClick() {
   score++;
   document.getElementById('score').textContent = score;
   showMessage('+1');
-  await saveScore();
+  await saveToFirebase();
   await updateLeaderboard();
 }
 
-async function saveScore() {
+async function saveToFirebase() {
   try {
     await fetch(`${DB_URL}/leaderboard/${userId}.json`, {
       method: 'PUT',
@@ -71,7 +59,7 @@ async function saveScore() {
       body: JSON.stringify({ score, username })
     });
   } catch (e) {
-    console.error('Save error:', e);
+    console.error('Save failed:', e);
   }
 }
 
@@ -84,27 +72,23 @@ async function loadScore() {
       document.getElementById('score').textContent = score;
     }
   } catch (e) {
-    console.log('No saved score:', e);
+    // Нет данных — начинаем с нуля
   }
 }
 
 async function updateLeaderboard() {
   try {
     const res = await fetch(`${DB_URL}/leaderboard.json`);
-    const data = await res.json();
-    if (!data) return;
+    const raw = await res.json();
+    if (!raw) return;
 
-    const leaderboard = Object.entries(data)
-      .map(([id, info]) => ({
-        id,
-        score: info.score,
-        username: info.username || 'Anonymous'
-      }))
+    const list = Object.entries(raw)
+      .map(([id, v]) => ({ id, ...v }))
       .sort((a, b) => b.score - a.score)
       .slice(0, 5);
 
-    const topList = document.getElementById('topList');
-    topList.innerHTML = leaderboard.map((p, i) => `
+    const el = document.getElementById('topList');
+    el.innerHTML = list.map((p, i) => `
       <div class="leader-item">
         <span>${i + 1}.</span>
         <span>@${p.username}</span>
@@ -112,47 +96,42 @@ async function updateLeaderboard() {
       </div>
     `).join('');
   } catch (e) {
-    console.error('Leaderboard error:', e);
+    console.error('Leaderboard load failed:', e);
   }
 }
 
 function showMessage(text) {
-  const el = document.getElementById('message');
-  el.textContent = text;
-  el.style.opacity = '1';
-  setTimeout(() => el.style.opacity = '0', 800);
+  const m = document.getElementById('message');
+  m.textContent = text;
+  m.style.opacity = '1';
+  setTimeout(() => m.style.opacity = '0', 800);
 }
 
-function showAdminPanel() {
-  const container = document.querySelector('.container');
-  const adminBtn = document.createElement('button');
-  adminBtn.textContent = '🗑️ Clear All Scores';
-  adminBtn.style.cssText = `
-    margin-top: 1.2rem;
-    padding: 0.4rem 0.8rem;
-    background: #ff4d4d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: bold;
+function addAdminButton() {
+  const btn = document.createElement('button');
+  btn.textContent = '🗑️ Clear All';
+  btn.style.cssText = `
+    margin-top: 1.2rem; padding: 0.4rem 0.8rem;
+    background: #ff3333; color: white; border: none;
+    border-radius: 8px; cursor: pointer; font-size: 0.9rem;
   `;
-  adminBtn.onclick = clearAllScores;
-  container.appendChild(adminBtn);
-}
-
-async function clearAllScores() {
-  if (confirm('⚠️ Удалить ВСЕ данные?')) {
-    try {
+  btn.onclick = async () => {
+    if (confirm('⚠️ Удалить ВСЁ?')) {
       await fetch(`${DB_URL}/leaderboard.json`, { method: 'DELETE' });
       score = 0;
       document.getElementById('score').textContent = '0';
-      await updateLeaderboard();
-      showMessage('✅ Очищено!');
-    } catch (e) {
-      alert('Ошибка');
-      console.error(e);
+      updateLeaderboard();
+      showMessage('✅ Cleared!');
     }
-  }
+  };
+  document.querySelector('.container').appendChild(btn);
+}
+
+function showError() {
+  document.body.innerHTML = `
+    <div style="padding:2rem;text-align:center;color:white;background:#d32f2f">
+      <h3>❌ Только в Telegram!</h3>
+      <p>Запустите игру из бота.</p>
+    </div>
+  `;
 }
