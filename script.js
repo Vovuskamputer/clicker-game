@@ -1,4 +1,3 @@
-// === Supabase config ===
 const SUPABASE_URL = 'https://loawlpgljlpsqewrrpdg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_0WOm9ARF2YOOGwHZUIsmmg_zyIBHh8N';
 
@@ -34,7 +33,9 @@ function showStatus(msg, sec = 2) {
 
 async function loadGame() {
   try {
-    const { data: settings } = await supabase.from('game_settings').select('key, value');
+    const { data: settings, error: err1 } = await supabase.from('game_settings').select('key, value');
+    if (err1) throw err1;
+
     const cfg = {};
     settings.forEach(r => cfg[r.key] = r.value);
 
@@ -49,11 +50,12 @@ async function loadGame() {
     document.getElementById('click-btn').style.backgroundColor = cfg.btn_color || '#ccc';
     perClick = parseInt(cfg.score_per_click) || 1;
 
-    const { data: leaders } = await supabase
+    const { data: leaders, error: err2 } = await supabase
       .from('scores')
       .select('user_id, score')
       .order('score', { ascending: false })
       .limit(10);
+    if (err2) throw err2;
 
     document.getElementById('leaders-list').innerHTML = 
       leaders.map((l, i) => `<div>${i+1}. ID: ${l.user_id} — ${l.score}</div>`).join('');
@@ -68,7 +70,7 @@ async function loadGame() {
       document.getElementById('active-area').style.display = 'block';
       document.getElementById('ended').style.display = 'none';
 
-      const { data: myScore } = await supabase
+      const { data: myScore, error: err3 } = await supabase
         .from('scores')
         .select('score')
         .eq('user_id', userId)
@@ -89,9 +91,10 @@ async function handleClick() {
   localScore += perClick;
   document.getElementById('score').textContent = `Очки: ${localScore}`;
   showStatus(`+${perClick}`);
-  await supabase
+  const { error } = await supabase
     .from('scores')
     .upsert({ user_id: BigInt(userId), score: localScore }, { onConflict: 'user_id' });
+  if (error) console.error("Save failed", error);
 }
 
 document.getElementById('click-btn').onclick = handleClick;
