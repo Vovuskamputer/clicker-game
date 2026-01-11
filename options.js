@@ -1,44 +1,91 @@
-// options.js — меняй всё здесь, не трогая основной код!
+// options.js — настройки игры
 
 window.GAME_CONFIG = {
   // === ОБЩИЕ ===
-  title: "🎄 New Year Clicker",
-  buttonText: "🎁 CLICK!",
-  scorePrefix: "Snowflakes:",
+  title: "🍪 Cookie Clicker",
+  buttonText: "🍪 CLICK!",
+  scorePrefix: "Cookies:",
   
-  // === ЭМОДЗИ И ТЕМА ===
+  // === ЭМОДЗИ ===
   emojis: {
-    titleIcon: "❄️",
-    clickBtn: "🎅",
+    titleIcon: "🍪",
+    clickBtn: "🍪",
+    poisonCookie: "💀", // ядовитая печенька
     leaderboard: "🏆",
     upgrade: "✨"
   },
   
-  // === ЦВЕТА (опционально, можно в CSS) ===
+  // === ТЕМА ===
   theme: {
-    primary: "#ff6f61",
-    background: "linear-gradient(135deg, #1e5799, #207cca, #2989d8, #1e5799)"
+    background: "linear-gradient(135deg, #ff9a9e, #fad0c4)"
   },
 
-  // === УЛУЧШЕНИЯ ===
+  // === УЛУЧШЕНИЯ (расширено) ===
   upgrades: [
     {
       id: 'click_power',
       name: 'Mega Click',
-      description: '+1 очко за клик',
-      baseCost: 10,
-      costMultiplier: 1.5, // каждый следующий дороже в 1.5x
-      effect: 1, // сколько добавляет
+      description: '+1 cookie per click',
+      baseCost: 15,
+      costMultiplier: 1.5,
+      effect: 1,
       owned: 0
     },
     {
       id: 'auto_clicker',
-      name: 'Elf Helper',
-      description: '+1 очко/сек',
-      baseCost: 30,
-      costMultiplier: 2,
+      name: 'Grandma',
+      description: '+1 cookie/sec',
+      baseCost: 50,
+      costMultiplier: 1.15,
       effect: 1,
       owned: 0
+    },
+    {
+      id: 'cursor',
+      name: 'Cursor',
+      description: '+0.1 cookie/sec',
+      baseCost: 15,
+      costMultiplier: 1.1,
+      effect: 0.1,
+      owned: 0
+    },
+    {
+      id: 'farm',
+      name: 'Farm',
+      description: '+8 cookies/sec',
+      baseCost: 110,
+      costMultiplier: 1.14,
+      effect: 8,
+      owned: 0
+    },
+    {
+      id: 'mine',
+      name: 'Mine',
+      description: '+47 cookies/sec',
+      baseCost: 12000,
+      costMultiplier: 1.14,
+      effect: 47,
+      owned: 0
+    },
+    {
+      id: 'double_click',
+      name: 'Lucky Hand',
+      description: '5% chance to double click',
+      baseCost: 200,
+      costMultiplier: 2,
+      effect: 0.05, // шанс 5%
+      owned: 0,
+      type: 'chance'
+    },
+    {
+      id: 'poison_protection',
+      name: 'Antidote',
+      description: 'Ignore poison cookie penalty',
+      baseCost: 500,
+      costMultiplier: 3,
+      effect: 1,
+      owned: 0,
+      type: 'protection'
     }
   ]
 };
