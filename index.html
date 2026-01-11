@@ -20,6 +20,7 @@
     <div class="action-bar">
       <button id="offlineBtn" class="icon-btn" style="display:none;">📥</button>
       <button id="leaderboardBtn" class="icon-btn">🏆</button>
+      <button id="statsBtn" class="icon-btn">ℹ️</button> <!-- ← ЭТА СТРОКА НОВАЯ -->
       <button id="adminPanelBtn" class="icon-btn" style="display:none;">🛠️</button>
     </div>
 
@@ -58,8 +59,18 @@
     </div>
 
     <div class="message" id="message"></div>
+
+    <!-- Stats Modal -->
+    <div id="statsModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h3>📊 Статистика</h3>
+        <div id="statsContent" style="text-align:left; margin:1rem 0;"></div>
+        <button id="closeStatsBtn" class="btn-secondary">Закрыть</button>
+      </div>
+    </div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
+
