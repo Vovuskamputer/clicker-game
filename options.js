@@ -5,31 +5,32 @@ window.GAME_CONFIG = {
 
   // === Эмодзи ===
   emojis: {
-    titleIcon: "❄️",         // только одна иконка в заголовке
-    cookie: "❄️",            // основная кнопка клика
-    poisonCookie: "🧊",      // ядовитая — лёд-ловушка
-    upgrade: "",             // не используется (у каждого улучшения своя иконка)
+    titleIcon: "❄️",
+    cookie: "❄️",
+    poisonCookie: "🧊",
     offline: "📥",
     leaderboard: "🏆",
+    upgrades: "✨",
+    stats: "ℹ️",
     admin: "🛠️"
   },
 
   // === Вероятности ===
   probabilities: {
-    poisonChance: 0.05,        // 5% шанс появления ловушки
+    poisonChance: 0.05,
     doubleClickChanceBase: 0.05
   },
 
   // === Тема ===
   theme: {
-    background: "linear-gradient(135deg, #a1c4fd, #c2e9fb)", // холодный градиент
-    cookieBtn: "#e0f7fa",     // светло-ледяной фон кнопки
-    primary: "#0288d1",       // синий акцент
-    danger: "#b71c1c",        // тёмно-красный для опасности
-    warning: "#ff8f00"        // оранжевый для предупреждений
+    background: "linear-gradient(135deg, #a1c4fd, #c2e9fb)",
+    cookieBtn: "#e0f7fa",
+    primary: "#0288d1",
+    danger: "#b71c1c",
+    warning: "#ff8f00"
   },
 
-  // === Улучшения (на русском, зимняя тематика) ===
+  // === Улучшения (группируются по category) ===
   upgrades: [
     {
       id: 'click_power',
@@ -39,47 +40,8 @@ window.GAME_CONFIG = {
       costMultiplier: 1.5,
       effect: 1,
       owned: 0,
-      icon: '👊'
-    },
-    {
-      id: 'cursor',
-      name: 'Снеговик-Помощник',
-      description: '+0.1 снежинок/сек',
-      baseCost: 15,
-      costMultiplier: 1.1,
-      effect: 0.1,
-      owned: 0,
-      icon: '⛄'
-    },
-    {
-      id: 'grandma',
-      name: 'Бабушка-Ведьма',
-      description: '+1 снежинка/сек',
-      baseCost: 100,
-      costMultiplier: 1.12,
-      effect: 1,
-      owned: 0,
-      icon: '🧙‍♀️'
-    },
-    {
-      id: 'farm',
-      name: 'Ледяная Ферма',
-      description: '+8 снежинок/сек',
-      baseCost: 1100,
-      costMultiplier: 1.13,
-      effect: 8,
-      owned: 0,
-      icon: '🏔️'
-    },
-    {
-      id: 'mine',
-      name: 'Алмазная Шахта',
-      description: '+47 снежинок/сек',
-      baseCost: 12000,
-      costMultiplier: 1.14,
-      effect: 47,
-      owned: 0,
-      icon: '💎'
+      icon: '👊',
+      category: 'click'
     },
     {
       id: 'double_click',
@@ -89,7 +51,52 @@ window.GAME_CONFIG = {
       costMultiplier: 2,
       effect: 0.05,
       owned: 0,
-      icon: '🌀'
+      icon: '🌀',
+      category: 'click'
+    },
+    {
+      id: 'cursor',
+      name: 'Снеговик-Помощник',
+      description: '+0.1 снежинок/сек',
+      baseCost: 15,
+      costMultiplier: 1.1,
+      effect: 0.1,
+      owned: 0,
+      icon: '⛄',
+      category: 'income'
+    },
+    {
+      id: 'grandma',
+      name: 'Бабушка-Ведьма',
+      description: '+1 снежинка/сек',
+      baseCost: 100,
+      costMultiplier: 1.12,
+      effect: 1,
+      owned: 0,
+      icon: '🧙‍♀️',
+      category: 'income'
+    },
+    {
+      id: 'farm',
+      name: 'Ледяная Ферма',
+      description: '+8 снежинок/сек',
+      baseCost: 1100,
+      costMultiplier: 1.13,
+      effect: 8,
+      owned: 0,
+      icon: '🏔️',
+      category: 'income'
+    },
+    {
+      id: 'mine',
+      name: 'Алмазная Шахта',
+      description: '+47 снежинок/сек',
+      baseCost: 12000,
+      costMultiplier: 1.14,
+      effect: 47,
+      owned: 0,
+      icon: '💎',
+      category: 'income'
     },
     {
       id: 'poison_protection',
@@ -99,8 +106,9 @@ window.GAME_CONFIG = {
       costMultiplier: 3,
       effect: 1,
       owned: 0,
-      maxLevel: 25,
-      icon: '🧤'
+      icon: '🧤',
+      category: 'other',
+      maxLevel: 25
     }
   ]
 };
