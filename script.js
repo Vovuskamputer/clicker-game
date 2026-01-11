@@ -88,13 +88,16 @@ async function handleClick() {
   if (gamePaused) return;
 
   if (isPoisonActive) {
-    const hasProtection = upgrades.some(u => u.id === 'poison_protection' && u.owned > 0);
-    if (!hasProtection) {
+    const antidote = upgrades.find(u => u.id === 'poison_protection');
+    const chancePercent = antidote ? Math.min(antidote.owned, 25) : 0; // 0–25%
+    const roll = Math.random() * 100;
+  
+    if (roll < chancePercent) {
+      showMessage('🛡️ Antidote worked!');
+    } else {
       const penalty = Math.floor(score / 2);
       score = Math.max(0, score - penalty);
       showMessage(`💀 -${penalty}`);
-    } else {
-      showMessage('🛡️ Antidote saved you!');
     }
     resetCookie();
     updateEverything();
@@ -355,5 +358,6 @@ document.getElementById('closeLbBtn').addEventListener('click', () => closeModal
 document.getElementById('closeAdminBtn').addEventListener('click', () => closeModal('adminModal'));
 document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 document.getElementById('togglePauseBtn').addEventListener('click', togglePause);
+
 
 
