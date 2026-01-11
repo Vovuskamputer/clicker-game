@@ -10,34 +10,54 @@
 </head>
 <body>
   <div class="container">
-    <h1 id="gameTitle">Click Me!</h1>
-    <div class="score"><span id="scorePrefix">Score:</span> <span id="score">0</span></div>
-    
-    <!-- Кнопка клика -->
-    <button id="clickBtn">CLICK</button>
-
-    <!-- Оффлайн доход -->
-    <div id="offlinePanel" class="offline-panel" style="display:none; margin-top:1rem;">
-      <button id="collectOfflineBtn" class="upgrade-btn">Собрать +<span id="offlineAmount">0</span></button>
+    <div class="header">
+      <h1 id="gameTitle">Click Me!</h1>
+      <div class="score"><span id="scorePrefix">Score:</span> <span id="score">0</span></div>
     </div>
 
-    <!-- Улучшения -->
-    <div class="upgrades" id="upgrades"></div>
+    <button id="clickBtn" class="cookie-btn">🍪</button>
 
-    <!-- Сообщение -->
-    <div class="message" id="message"></div>
+    <div class="action-bar">
+      <button id="offlineBtn" class="icon-btn" style="display:none;">📥</button>
+      <button id="leaderboardBtn" class="icon-btn">🏆</button>
+      <button id="adminPanelBtn" class="icon-btn" style="display:none;">🛠️</button>
+    </div>
 
-    <!-- Кнопка лидерборда -->
-    <button id="showLeaderboardBtn" class="leaderboard-btn">🏆 Таблица лидеров</button>
-
-    <!-- Модальное окно лидерборда -->
-    <div id="leaderboardModal" class="modal" style="display:none;">
-      <div class="modal-content">
-        <h3>🏆 Рейтинг игроков</h3>
-        <div id="fullLeaderboard"></div>
-        <button id="closeLeaderboardBtn" style="margin-top:1rem;">Закрыть</button>
+    <!-- Offline Modal -->
+    <div id="offlineModal" class="modal" style="display:none;">
+      <div class="modal-content small">
+        <h3>📥 Offline Income</h3>
+        <p>+<span id="offlineAmount">0</span> cookies</p>
+        <button id="collectOfflineBtn" class="btn-primary">Собрать</button>
+        <button id="closeOfflineBtn" class="btn-secondary">Отмена</button>
       </div>
     </div>
+
+    <!-- Leaderboard Modal -->
+    <div id="leaderboardModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h3>🏆 Leaderboard</h3>
+        <div id="fullLeaderboard" class="scrollable-list"></div>
+        <button id="closeLbBtn" class="btn-secondary">Закрыть</button>
+      </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal" style="display:none;">
+      <div class="modal-content small">
+        <h3>🛠️ Admin Panel</h3>
+        <button id="clearAllBtn" class="btn-danger">🗑️ Clear All Data</button>
+        <button id="togglePauseBtn" class="btn-warning">⏸️ Toggle Pause</button>
+        <button id="closeAdminBtn" class="btn-secondary">Закрыть</button>
+      </div>
+    </div>
+
+    <div class="upgrades-section">
+      <h3>✨ Upgrades</h3>
+      <div id="upgrades" class="upgrades-grid"></div>
+    </div>
+
+    <div class="message" id="message"></div>
   </div>
 
   <script src="script.js"></script>
