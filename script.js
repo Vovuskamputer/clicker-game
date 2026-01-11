@@ -239,11 +239,31 @@ async function checkGamePause() {
     const res = await fetch(`${DB_URL}/gameStatus/isPaused.json`);
     const paused = await res.json();
     gamePaused = paused === true;
-    if (gamePaused && !document.body.innerHTML.includes('приостановлена')) {
+
+    if (gamePaused && userId !== ADMIN_ID) {
       document.body.innerHTML = `<div style="padding:2rem;text-align:center;color:white;background:#d32f2f">
         <h3>⏸️ Игра приостановлена</h3>
-        <p>Администратор отключил заработок.</p>
+        <p>Администратор временно отключил заработок.</p>
       </div>`;
+    } else if (gamePaused && userId === ADMIN_ID) {
+      // Показываем тихое уведомление
+      let notice = document.getElementById('pauseNotice');
+      if (!notice) {
+        notice = document.createElement('div');
+        notice.id = 'pauseNotice';
+        notice.style.cssText = `
+          position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+          background: #ff9800; color: #000; padding: 0.4rem 1rem;
+          border-radius: 20px; font-weight: bold; z-index: 999;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+        `;
+        notice.textContent = '⏸️ Игра приостановлена (только вы)';
+        document.body.appendChild(notice);
+      }
+    } else {
+      // Убираем уведомление, если игра возобновлена
+      const notice = document.getElementById('pauseNotice');
+      if (notice) notice.remove();
     }
   } catch (e) {}
 }
@@ -335,4 +355,5 @@ document.getElementById('closeLbBtn').addEventListener('click', () => closeModal
 document.getElementById('closeAdminBtn').addEventListener('click', () => closeModal('adminModal'));
 document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 document.getElementById('togglePauseBtn').addEventListener('click', togglePause);
+
 
