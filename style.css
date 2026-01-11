@@ -101,25 +101,29 @@ body {
 
 .upgrade-card {
   display: flex;
+  align-items: center;
   background: rgba(255,255,255,0.15);
   border-radius: 12px;
   padding: 0.8rem;
-  align-items: center;
   gap: 0.8rem;
+  min-height: 60px;
 }
 
 .upgrade-icon {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
+  width: 40px;
+  text-align: center;
 }
 
 .upgrade-info {
-  text-align: left;
   flex: 1;
+  text-align: left;
 }
 
 .upgrade-name {
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
 }
 
 .upgrade-desc {
@@ -127,25 +131,29 @@ body {
   opacity: 0.85;
 }
 
-.upgrade-cost {
-  background: rgba(0,0,0,0.3);
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-
 .upgrade-btn {
-  padding: 0.3rem 0.6rem;
+  padding: 0.4rem 0.8rem;
   background: #4caf50;
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 0.8rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: bold;
   cursor: pointer;
+  white-space: nowrap;
 }
 
-.upgrade-btn:disabled {
+.upgrade-price {
+  font-weight: bold;
+  background: rgba(0,0,0,0.3);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  min-width: 50px;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.upgrade-btn.disabled {
   background: #666;
   cursor: not-allowed;
 }
@@ -251,3 +259,4 @@ body {
   width: 100%;
   cursor: pointer;
 }
+
