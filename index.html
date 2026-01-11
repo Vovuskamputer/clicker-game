@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title id="pageTitle">Clicker</title>
+  <title id="pageTitle">Игра</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="options.js"></script>
   <link rel="stylesheet" href="style.css" />
@@ -11,24 +11,25 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1 id="gameTitle">Click Me!</h1>
-      <div class="score"><span id="scorePrefix">Score:</span> <span id="score">0</span></div>
+      <h1 id="gameTitle">Загрузка...</h1>
+      <div class="score"><span id="scorePrefix">Очки:</span> <span id="score">0</span></div>
     </div>
 
-    <button id="clickBtn" class="cookie-btn">🍪</button>
+    <button id="clickBtn" class="cookie-btn">❄️</button>
 
     <div class="action-bar">
       <button id="offlineBtn" class="icon-btn" style="display:none;">📥</button>
       <button id="leaderboardBtn" class="icon-btn">🏆</button>
-      <button id="statsBtn" class="icon-btn">ℹ️</button> <!-- ← ЭТА СТРОКА НОВАЯ -->
+      <button id="statsBtn" class="icon-btn">ℹ️</button>
+      <button id="upgradesBtn" class="icon-btn">✨</button>
       <button id="adminPanelBtn" class="icon-btn" style="display:none;">🛠️</button>
     </div>
 
     <!-- Offline Modal -->
     <div id="offlineModal" class="modal" style="display:none;">
       <div class="modal-content small">
-        <h3>📥 Offline Income</h3>
-        <p>+<span id="offlineAmount">0</span> cookies</p>
+        <h3>📥 Оффлайн доход</h3>
+        <p>+<span id="offlineAmount">0</span> <span id="offlineUnit">очков</span></p>
         <button id="collectOfflineBtn" class="btn-primary">Собрать</button>
         <button id="closeOfflineBtn" class="btn-secondary">Отмена</button>
       </div>
@@ -37,28 +38,25 @@
     <!-- Leaderboard Modal -->
     <div id="leaderboardModal" class="modal" style="display:none;">
       <div class="modal-content">
-        <h3>🏆 Leaderboard</h3>
+        <h3>🏆 Таблица лидеров</h3>
         <div id="fullLeaderboard" class="scrollable-list"></div>
         <button id="closeLbBtn" class="btn-secondary">Закрыть</button>
       </div>
     </div>
 
-    <!-- Admin Modal -->
-    <div id="adminModal" class="modal" style="display:none;">
-      <div class="modal-content small">
-        <h3>🛠️ Admin Panel</h3>
-        <button id="clearAllBtn" class="btn-danger">🗑️ Clear All Data</button>
-        <button id="togglePauseBtn" class="btn-warning">⏸️ Toggle Pause</button>
-        <button id="closeAdminBtn" class="btn-secondary">Закрыть</button>
+    <!-- Upgrades Modal -->
+    <div id="upgradesModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h3>✨ Улучшения</h3>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="click">🖱️ Клик</button>
+          <button class="tab-btn" data-tab="income">⏳ Доход</button>
+          <button class="tab-btn" data-tab="other">🧪 Доп.</button>
+        </div>
+        <div id="upgradesContent" class="scrollable-list"></div>
+        <button id="closeUpgradesBtn" class="btn-secondary">Закрыть</button>
       </div>
     </div>
-
-    <div class="upgrades-section">
-      <h3>✨ Upgrades</h3>
-      <div id="upgrades" class="upgrades-grid"></div>
-    </div>
-
-    <div class="message" id="message"></div>
 
     <!-- Stats Modal -->
     <div id="statsModal" class="modal" style="display:none;">
@@ -68,9 +66,20 @@
         <button id="closeStatsBtn" class="btn-secondary">Закрыть</button>
       </div>
     </div>
+
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal" style="display:none;">
+      <div class="modal-content small">
+        <h3>🛠️ Панель админа</h3>
+        <button id="clearAllBtn" class="btn-danger">🗑️ Очистить всё</button>
+        <button id="togglePauseBtn" class="btn-warning">⏸️ Пауза игры</button>
+        <button id="closeAdminBtn" class="btn-secondary">Закрыть</button>
+      </div>
+    </div>
+
+    <div class="message" id="message"></div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
