@@ -155,15 +155,16 @@ function renderUpgrades() {
     const canAfford = score >= cost;
     return `
       <div class="upgrade-card">
-        <div class="upgrade-icon">${cfg.emojis.upgrade}</div>
+        <div class="upgrade-icon">${u.icon}</div>
         <div class="upgrade-info">
           <div class="upgrade-name">${u.name}</div>
           <div class="upgrade-desc">${u.description}</div>
         </div>
-        <div>
-          <div class="upgrade-cost">${cost}</div>
-          <button class="upgrade-btn" ${canAfford ? '' : 'disabled'} onclick="buyUpgrade('${u.id}')">Buy</button>
-        </div>
+        <div class="upgrade-price">${cost}</div>
+        <button class="upgrade-btn ${canAfford ? '' : 'disabled'}" 
+                onclick="buyUpgrade('${u.id}')">
+          ${canAfford ? 'Buy' : 'Locked'}
+        </button>
       </div>
     `;
   }).join('');
@@ -334,3 +335,4 @@ document.getElementById('closeLbBtn').addEventListener('click', () => closeModal
 document.getElementById('closeAdminBtn').addEventListener('click', () => closeModal('adminModal'));
 document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 document.getElementById('togglePauseBtn').addEventListener('click', togglePause);
+
