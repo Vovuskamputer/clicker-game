@@ -1,14 +1,14 @@
 window.GAME_CONFIG = {
   // === Основное ===
-  title: "🍪 Cookie Empire",
-  scorePrefix: "Cookies:",
+  title: "Ледяное Королевство",
+  scorePrefix: "Снежинки:",
 
   // === Эмодзи ===
   emojis: {
-    titleIcon: "🍪",
-    cookie: "🍪",
-    poisonCookie: "💀",
-    upgrade: "✨",
+    titleIcon: "❄️",         // только одна иконка в заголовке
+    cookie: "❄️",            // основная кнопка клика
+    poisonCookie: "🧊",      // ядовитая — лёд-ловушка
+    upgrade: "",             // не используется (у каждого улучшения своя иконка)
     offline: "📥",
     leaderboard: "🏆",
     admin: "🛠️"
@@ -16,91 +16,91 @@ window.GAME_CONFIG = {
 
   // === Вероятности ===
   probabilities: {
-    poisonChance: 0.05,        // 5%
-    doubleClickChanceBase: 0.05 // база для улучшения
+    poisonChance: 0.05,        // 5% шанс появления ловушки
+    doubleClickChanceBase: 0.05
   },
 
   // === Тема ===
   theme: {
-    background: "linear-gradient(135deg, #ff9a9e, #fad0c4)",
-    cookieBtn: "#ffffff",
-    primary: "#4caf50",
-    danger: "#f44336",
-    warning: "#ff9800"
+    background: "linear-gradient(135deg, #a1c4fd, #c2e9fb)", // холодный градиент
+    cookieBtn: "#e0f7fa",     // светло-ледяной фон кнопки
+    primary: "#0288d1",       // синий акцент
+    danger: "#b71c1c",        // тёмно-красный для опасности
+    warning: "#ff8f00"        // оранжевый для предупреждений
   },
 
-  // === Улучшения ===
+  // === Улучшения (на русском, зимняя тематика) ===
   upgrades: [
     {
       id: 'click_power',
-      name: 'Mega Click',
-      description: '+1 cookie per click',
+      name: 'Морозный Удар',
+      description: '+1 снежинка за клик',
       baseCost: 15,
       costMultiplier: 1.5,
       effect: 1,
       owned: 0,
-      icon: '👆'
+      icon: '👊'
     },
     {
       id: 'cursor',
-      name: 'Cursor',
-      description: '+0.1 cookie/sec',
+      name: 'Снеговик-Помощник',
+      description: '+0.1 снежинок/сек',
       baseCost: 15,
       costMultiplier: 1.1,
       effect: 0.1,
       owned: 0,
-      icon: '🖱️'
+      icon: '⛄'
     },
     {
       id: 'grandma',
-      name: 'Grandma',
-      description: '+1 cookie/sec',
+      name: 'Бабушка-Ведьма',
+      description: '+1 снежинка/сек',
       baseCost: 100,
       costMultiplier: 1.12,
       effect: 1,
       owned: 0,
-      icon: '👵'
+      icon: '🧙‍♀️'
     },
     {
       id: 'farm',
-      name: 'Farm',
-      description: '+8 cookies/sec',
+      name: 'Ледяная Ферма',
+      description: '+8 снежинок/сек',
       baseCost: 1100,
       costMultiplier: 1.13,
       effect: 8,
       owned: 0,
-      icon: '🚜'
+      icon: '🏔️'
     },
     {
       id: 'mine',
-      name: 'Mine',
-      description: '+47 cookies/sec',
+      name: 'Алмазная Шахта',
+      description: '+47 снежинок/сек',
       baseCost: 12000,
       costMultiplier: 1.14,
       effect: 47,
       owned: 0,
-      icon: '⛏️'
+      icon: '💎'
     },
     {
       id: 'double_click',
-      name: 'Lucky Hand',
-      description: 'Extra chance to double click',
+      name: 'Эхо Метели',
+      description: 'Шанс x2 за клик',
       baseCost: 200,
       costMultiplier: 2,
       effect: 0.05,
       owned: 0,
-      icon: '🖐️'
+      icon: '🌀'
     },
     {
       id: 'poison_protection',
-      name: 'Antidote',
-      description: '+1% chance to survive poison (max 25%)',
+      name: 'Тёплая Перчатка',
+      description: '+1% шанс избежать ловушки (макс. 25%)',
       baseCost: 500,
       costMultiplier: 3,
-      effect: 1, // +1% за уровень
+      effect: 1,
       owned: 0,
       maxLevel: 25,
-      icon: '🛡️'
+      icon: '🧤'
     }
   ]
 };
