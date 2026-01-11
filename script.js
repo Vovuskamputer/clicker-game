@@ -72,10 +72,11 @@ function startAutoClick() {
     if (power > 0) {
       score += power;
       updateUI();
+      renderUpgrades(); // ← разблокировать кнопки, если хватает денег
+      saveToFirebase(); // ← сохранять при любом изменении
     }
   }, 1000);
 }
-
 function updateUI() {
   document.getElementById('score').textContent = Math.floor(score);
 }
@@ -340,6 +341,36 @@ function showMessage(text) {
 
 function showError() {
   document.body.innerHTML = `<div style="padding:2rem;text-align:center;color:white;background:#d32f2f"><h3>❌ Только в Telegram!</h3><p>Запустите из бота.</p></div>`;
+}
+
+// Обновление мини-лидерборда (если оставишь топ-5 в основном экране)
+async function updateLeaderboard() {
+  try {
+    const res = await fetch(`${DB_URL}/saves.json`);
+    const raw = await res.json();
+    if (!raw) return;
+
+    const list = Object.entries(raw)
+      .map(([id, v]) => ({ id, score: v.score || 0, username: v.username || 'Anonymous' }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 5);
+
+    const el = document.getElementById('topList');
+    if (el) {
+      el.innerHTML = list.map((p, i) => `
+        <div class="leader-item">
+          <span>${i + 1}.</span>
+          <span>@${p.username}</span>
+          <span>${p.score}</span>
+        </div>
+      `).join('');
+    }
+  } catch (e) { console.error('Mini leaderboard error:', e); }
+}
+
+// Запуск обновления (если есть блок #topList)
+if (document.getElementById('topList')) {
+  setInterval(updateLeaderboard, 5000);
 }
 
 // Глобальные функции для кнопок
