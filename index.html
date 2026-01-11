@@ -5,28 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title id="pageTitle">Clicker</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="options.js"></script> <!-- ДО script.js -->
+  <script src="options.js"></script>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
     <h1 id="gameTitle">Click Me!</h1>
     <div class="score"><span id="scorePrefix">Score:</span> <span id="score">0</span></div>
-    <button id="clickBtn">CLICK</button>
     
-    <!-- Блок улучшений -->
+    <!-- Кнопка клика -->
+    <button id="clickBtn">CLICK</button>
+
+    <!-- Оффлайн доход -->
+    <div id="offlinePanel" class="offline-panel" style="display:none; margin-top:1rem;">
+      <button id="collectOfflineBtn" class="upgrade-btn">Собрать +<span id="offlineAmount">0</span></button>
+    </div>
+
+    <!-- Улучшения -->
     <div class="upgrades" id="upgrades"></div>
 
+    <!-- Сообщение -->
     <div class="message" id="message"></div>
 
-    <div class="leaderboard">
-      <h3 id="leaderboardTitle">🏆 Top Players</h3>
-      <div id="topList"></div>
+    <!-- Кнопка лидерборда -->
+    <button id="showLeaderboardBtn" class="leaderboard-btn">🏆 Таблица лидеров</button>
+
+    <!-- Модальное окно лидерборда -->
+    <div id="leaderboardModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <h3>🏆 Рейтинг игроков</h3>
+        <div id="fullLeaderboard"></div>
+        <button id="closeLeaderboardBtn" style="margin-top:1rem;">Закрыть</button>
+      </div>
     </div>
   </div>
+
   <script src="script.js"></script>
 </body>
-
 </html>
-
-
