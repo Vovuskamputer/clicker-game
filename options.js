@@ -1,26 +1,35 @@
-// options.js — настройки игры
-
 window.GAME_CONFIG = {
-  // === ОБЩИЕ ===
-  title: "🍪 Cookie Clicker",
-  buttonText: "🍪 CLICK!",
+  // === Основное ===
+  title: "🍪 Cookie Empire",
   scorePrefix: "Cookies:",
-  
-  // === ЭМОДЗИ ===
+
+  // === Эмодзи ===
   emojis: {
     titleIcon: "🍪",
-    clickBtn: "🍪",
-    poisonCookie: "💀", // ядовитая печенька
+    cookie: "🍪",
+    poisonCookie: "💀",
+    upgrade: "✨",
+    offline: "📥",
     leaderboard: "🏆",
-    upgrade: "✨"
-  },
-  
-  // === ТЕМА ===
-  theme: {
-    background: "linear-gradient(135deg, #ff9a9e, #fad0c4)"
+    admin: "🛠️"
   },
 
-  // === УЛУЧШЕНИЯ (расширено) ===
+  // === Вероятности ===
+  probabilities: {
+    poisonChance: 0.05,        // 5%
+    doubleClickChanceBase: 0.05 // база для улучшения
+  },
+
+  // === Тема ===
+  theme: {
+    background: "linear-gradient(135deg, #ff9a9e, #fad0c4)",
+    cookieBtn: "#ffffff",
+    primary: "#4caf50",
+    danger: "#f44336",
+    warning: "#ff9800"
+  },
+
+  // === Улучшения ===
   upgrades: [
     {
       id: 'click_power',
@@ -28,15 +37,6 @@ window.GAME_CONFIG = {
       description: '+1 cookie per click',
       baseCost: 15,
       costMultiplier: 1.5,
-      effect: 1,
-      owned: 0
-    },
-    {
-      id: 'auto_clicker',
-      name: 'Grandma',
-      description: '+1 cookie/sec',
-      baseCost: 50,
-      costMultiplier: 1.15,
       effect: 1,
       owned: 0
     },
@@ -50,11 +50,20 @@ window.GAME_CONFIG = {
       owned: 0
     },
     {
+      id: 'grandma',
+      name: 'Grandma',
+      description: '+1 cookie/sec',
+      baseCost: 100,
+      costMultiplier: 1.12,
+      effect: 1,
+      owned: 0
+    },
+    {
       id: 'farm',
       name: 'Farm',
       description: '+8 cookies/sec',
-      baseCost: 110,
-      costMultiplier: 1.14,
+      baseCost: 1100,
+      costMultiplier: 1.13,
       effect: 8,
       owned: 0
     },
@@ -70,22 +79,20 @@ window.GAME_CONFIG = {
     {
       id: 'double_click',
       name: 'Lucky Hand',
-      description: '5% chance to double click',
+      description: 'Extra chance to double click',
       baseCost: 200,
       costMultiplier: 2,
-      effect: 0.05, // шанс 5%
-      owned: 0,
-      type: 'chance'
+      effect: 0.05,
+      owned: 0
     },
     {
       id: 'poison_protection',
       name: 'Antidote',
-      description: 'Ignore poison cookie penalty',
+      description: 'Ignore poison penalty',
       baseCost: 500,
       costMultiplier: 3,
       effect: 1,
-      owned: 0,
-      type: 'protection'
+      owned: 0
     }
   ]
 };
