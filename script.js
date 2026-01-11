@@ -335,6 +335,24 @@ function showError() {
   </div>`;
 }
 
+// === STATS ===
+function showStats() {
+  const autoPerSec = calculateAutoClickPower();
+  const autoPerHour = Math.floor(autoPerSec * 3600);
+  document.getElementById('statsContent').innerHTML = `
+    <p><b>Текущий счёт:</b> ${score}</p>
+    <p><b>Доход/сек:</b> ${autoPerSec.toFixed(1)}</p>
+    <p><b>Доход/час:</b> ${autoPerHour}</p>
+    <p><b>Уровень защиты:</b> ${upgrades.find(u => u.id === 'poison_protection')?.owned || 0}/25</p>
+  `;
+  document.getElementById('statsModal').style.display = 'flex';
+}
+
+document.getElementById('statsBtn').addEventListener('click', showStats);
+document.getElementById('closeStatsBtn').addEventListener('click', () => {
+  document.getElementById('statsModal').style.display = 'none';
+});
+
 // === GLOBAL ===
 window.buyUpgrade = buyUpgrade;
 window.collectOffline = collectOffline;
@@ -358,6 +376,7 @@ document.getElementById('closeLbBtn').addEventListener('click', () => closeModal
 document.getElementById('closeAdminBtn').addEventListener('click', () => closeModal('adminModal'));
 document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 document.getElementById('togglePauseBtn').addEventListener('click', togglePause);
+
 
 
 
