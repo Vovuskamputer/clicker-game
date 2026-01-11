@@ -50,15 +50,27 @@ function applyConfig() {
   document.getElementById('pageTitle').textContent = c.title;
   document.getElementById('gameTitle').innerHTML = `${c.emojis.titleIcon} ${c.title}`;
   document.getElementById('scorePrefix').textContent = c.scorePrefix;
+  document.getElementById('offlineUnit').textContent = c.scorePrefix.replace(':', '').trim();
   document.body.style.background = c.theme.background;
+  document.getElementById('clickBtn').textContent = c.emojis.cookie;
+  document.getElementById('clickBtn').style.background = c.theme.cookieBtn;
+
   upgrades = JSON.parse(JSON.stringify(c.upgrades));
-  renderUpgrades();
+  renderUpgradesTab('click');
 }
 
 function calculateAutoClickPower() {
   return upgrades
     .filter(u => !['double_click', 'poison_protection'].includes(u.id))
     .reduce((sum, u) => sum + u.owned * u.effect, 0);
+}
+
+function getClickPower() {
+  let power = 1;
+  const boost = upgrades
+    .filter(u => u.id === 'click_power')
+    .reduce((sum, u) => sum + u.owned * u.effect, 0);
+  return power + boost;
 }
 
 function startAutoClick() {
@@ -68,16 +80,15 @@ function startAutoClick() {
     const power = calculateAutoClickPower();
     if (power > 0) {
       score += power;
-      updateEverything(); // ← ключевое: обновить ВСЁ
+      updateEverything();
     }
   }, 1000);
 }
 
 function updateEverything() {
-  score = Math.floor(score); // ← всегда целое
+  score = Math.floor(score);
   updateUI();
-  renderUpgrades();
-  saveToFirebase(); // ← сохраняем сразу
+  saveToFirebase();
 }
 
 function updateUI() {
@@ -89,33 +100,28 @@ async function handleClick() {
 
   if (isPoisonActive) {
     const antidote = upgrades.find(u => u.id === 'poison_protection');
-    const chancePercent = antidote ? Math.min(antidote.owned, 25) : 0; // 0–25%
+    const chancePercent = antidote ? Math.min(antidote.owned, 25) : 0;
     const roll = Math.random() * 100;
-  
+
     if (roll < chancePercent) {
-      showMessage('🛡️ Antidote worked!');
+      showMessage('🧤 Защита сработала!');
     } else {
       const penalty = Math.floor(score / 2);
       score = Math.max(0, score - penalty);
-      showMessage(`💀 -${penalty}`);
+      showMessage(`🧊 -${penalty}`);
     }
     resetCookie();
     updateEverything();
     return;
   }
 
-  let clickPower = 1;
-  const clickBoost = upgrades
-    .filter(u => u.id === 'click_power')
-    .reduce((sum, u) => sum + u.owned * u.effect, 0);
-  clickPower += clickBoost;
-
+  let clickPower = getClickPower();
   const doubleChance = upgrades
     .filter(u => u.id === 'double_click')
     .reduce((sum, u) => sum + u.owned * cfg.probabilities.doubleClickChanceBase, 0);
   if (Math.random() < doubleChance) {
     clickPower *= 2;
-    showMessage('✨ x2!');
+    showMessage('🌀 x2!');
   }
 
   score += clickPower;
@@ -129,7 +135,7 @@ async function handleClick() {
 function activatePoisonCookie() {
   isPoisonActive = true;
   document.getElementById('clickBtn').textContent = cfg.emojis.poisonCookie;
-  document.getElementById('clickBtn').style.background = '#8B0000';
+  document.getElementById('clickBtn').style.background = '#b71c1c';
   clearTimeout(poisonTimeout);
   poisonTimeout = setTimeout(resetCookie, 2000);
 }
@@ -144,18 +150,27 @@ async function buyUpgrade(id) {
   if (gamePaused) return;
   const u = upgrades.find(x => x.id === id);
   if (!u) return;
+  if (u.maxLevel && u.owned >= u.maxLevel) return;
   const cost = Math.floor(u.baseCost * Math.pow(u.costMultiplier, u.owned));
   if (score < cost) return;
   score -= cost;
   u.owned++;
   updateEverything();
+  renderCurrentTab();
 }
 
-function renderUpgrades() {
-  const container = document.getElementById('upgrades');
-  container.innerHTML = upgrades.map(u => {
+function renderCurrentTab() {
+  const activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+  renderUpgradesTab(activeTab);
+}
+
+function renderUpgradesTab(category) {
+  const container = document.getElementById('upgradesContent');
+  const filtered = upgrades.filter(u => u.category === category);
+  container.innerHTML = filtered.map(u => {
     const cost = Math.floor(u.baseCost * Math.pow(u.costMultiplier, u.owned));
     const canAfford = score >= cost;
+    const disabled = !canAfford || (u.maxLevel && u.owned >= u.maxLevel);
     return `
       <div class="upgrade-card">
         <div class="upgrade-icon">${u.icon}</div>
@@ -164,14 +179,22 @@ function renderUpgrades() {
           <div class="upgrade-desc">${u.description}</div>
         </div>
         <div class="upgrade-price">${cost}</div>
-        <button class="upgrade-btn ${canAfford ? '' : 'disabled'}" 
-                onclick="buyUpgrade('${u.id}')">
-          ${canAfford ? 'Buy' : 'Locked'}
+        <button class="upgrade-btn" ${disabled ? 'disabled' : ''} onclick="buyUpgrade('${u.id}')">
+          ${disabled ? '🔒' : 'Купить'}
         </button>
       </div>
     `;
   }).join('');
 }
+
+// === TABS ===
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderUpgradesTab(btn.dataset.tab);
+  });
+});
 
 // === OFFLINE INCOME ===
 async function loadSave() {
@@ -244,19 +267,18 @@ async function checkGamePause() {
     gamePaused = paused === true;
 
     if (gamePaused && userId !== ADMIN_ID) {
-      document.body.innerHTML = `<div style="padding:2rem;text-align:center;color:white;background:#d32f2f">
+      document.body.innerHTML = `<div style="padding:2rem;text-align:center;color:white;background:#b71c1c">
         <h3>⏸️ Игра приостановлена</h3>
         <p>Администратор временно отключил заработок.</p>
       </div>`;
     } else if (gamePaused && userId === ADMIN_ID) {
-      // Показываем тихое уведомление
       let notice = document.getElementById('pauseNotice');
       if (!notice) {
         notice = document.createElement('div');
         notice.id = 'pauseNotice';
         notice.style.cssText = `
           position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
-          background: #ff9800; color: #000; padding: 0.4rem 1rem;
+          background: #ff8f00; color: #000; padding: 0.4rem 1rem;
           border-radius: 20px; font-weight: bold; z-index: 999;
           box-shadow: 0 3px 8px rgba(0,0,0,0.3);
         `;
@@ -264,7 +286,6 @@ async function checkGamePause() {
         document.body.appendChild(notice);
       }
     } else {
-      // Убираем уведомление, если игра возобновлена
       const notice = document.getElementById('pauseNotice');
       if (notice) notice.remove();
     }
@@ -282,7 +303,7 @@ async function clearAll() {
     score = 0;
     upgrades.forEach(u => u.owned = 0);
     updateEverything();
-    showMessage('✅ Cleared!');
+    showMessage('✅ Очищено!');
     document.getElementById('adminModal').style.display = 'none';
   }
 }
@@ -329,7 +350,7 @@ function showMessage(text) {
 }
 
 function showError() {
-  document.body.innerHTML = `<div style="padding:2rem;text-align:center;color:white;background:#d32f2f">
+  document.body.innerHTML = `<div style="padding:2rem;text-align:center;color:white;background:#b71c1c">
     <h3>❌ Только в Telegram!</h3>
     <p>Запустите из бота.</p>
   </div>`;
@@ -337,21 +358,18 @@ function showError() {
 
 // === STATS ===
 function showStats() {
+  const unit = cfg.scorePrefix.replace(':', '').trim();
   const autoPerSec = calculateAutoClickPower();
   const autoPerHour = Math.floor(autoPerSec * 3600);
   document.getElementById('statsContent').innerHTML = `
-    <p><b>Текущий счёт:</b> ${score}</p>
-    <p><b>Доход/сек:</b> ${autoPerSec.toFixed(1)}</p>
-    <p><b>Доход/час:</b> ${autoPerHour}</p>
+    <p><b>Текущий счёт:</b> ${score} ${unit}</p>
+    <p><b>За клик:</b> ${getClickPower()} ${unit}</p>
+    <p><b>Доход/сек:</b> ${autoPerSec.toFixed(1)} ${unit}</p>
+    <p><b>Доход/час:</b> ${autoPerHour} ${unit}</p>
     <p><b>Уровень защиты:</b> ${upgrades.find(u => u.id === 'poison_protection')?.owned || 0}/25</p>
   `;
   document.getElementById('statsModal').style.display = 'flex';
 }
-
-document.getElementById('statsBtn').addEventListener('click', showStats);
-document.getElementById('closeStatsBtn').addEventListener('click', () => {
-  document.getElementById('statsModal').style.display = 'none';
-});
 
 // === GLOBAL ===
 window.buyUpgrade = buyUpgrade;
@@ -360,6 +378,7 @@ window.showFullLeaderboard = showFullLeaderboard;
 window.openAdminPanel = openAdminPanel;
 window.clearAll = clearAll;
 window.togglePause = togglePause;
+window.showStats = showStats;
 window.closeModal = (id) => { document.getElementById(id).style.display = 'none'; };
 
 // === EVENTS ===
@@ -369,14 +388,17 @@ document.getElementById('offlineBtn').addEventListener('click', () => {
   document.getElementById('offlineModal').style.display = 'flex';
 });
 document.getElementById('leaderboardBtn').addEventListener('click', showFullLeaderboard);
+document.getElementById('upgradesBtn').addEventListener('click', () => {
+  document.getElementById('upgradesModal').style.display = 'flex';
+  renderUpgradesTab('click');
+});
+document.getElementById('statsBtn').addEventListener('click', showStats);
 document.getElementById('adminPanelBtn').addEventListener('click', openAdminPanel);
 document.getElementById('collectOfflineBtn').addEventListener('click', collectOffline);
 document.getElementById('closeOfflineBtn').addEventListener('click', () => closeModal('offlineModal'));
 document.getElementById('closeLbBtn').addEventListener('click', () => closeModal('leaderboardModal'));
+document.getElementById('closeUpgradesBtn').addEventListener('click', () => closeModal('upgradesModal'));
+document.getElementById('closeStatsBtn').addEventListener('click', () => closeModal('statsModal'));
 document.getElementById('closeAdminBtn').addEventListener('click', () => closeModal('adminModal'));
 document.getElementById('clearAllBtn').addEventListener('click', clearAll);
 document.getElementById('togglePauseBtn').addEventListener('click', togglePause);
-
-
-
-
