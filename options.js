@@ -94,11 +94,12 @@ window.GAME_CONFIG = {
     {
       id: 'poison_protection',
       name: 'Antidote',
-      description: 'Ignore poison penalty',
+      description: '+1% chance to survive poison (max 25%)',
       baseCost: 500,
       costMultiplier: 3,
-      effect: 1,
+      effect: 1, // +1% за уровень
       owned: 0,
+      maxLevel: 25,
       icon: '🛡️'
     }
   ]
