@@ -38,7 +38,8 @@ window.GAME_CONFIG = {
       baseCost: 15,
       costMultiplier: 1.5,
       effect: 1,
-      owned: 0
+      owned: 0,
+      icon: '👆'
     },
     {
       id: 'cursor',
@@ -47,7 +48,8 @@ window.GAME_CONFIG = {
       baseCost: 15,
       costMultiplier: 1.1,
       effect: 0.1,
-      owned: 0
+      owned: 0,
+      icon: '🖱️'
     },
     {
       id: 'grandma',
@@ -56,7 +58,8 @@ window.GAME_CONFIG = {
       baseCost: 100,
       costMultiplier: 1.12,
       effect: 1,
-      owned: 0
+      owned: 0,
+      icon: '👵'
     },
     {
       id: 'farm',
@@ -65,7 +68,8 @@ window.GAME_CONFIG = {
       baseCost: 1100,
       costMultiplier: 1.13,
       effect: 8,
-      owned: 0
+      owned: 0,
+      icon: '🚜'
     },
     {
       id: 'mine',
@@ -74,7 +78,8 @@ window.GAME_CONFIG = {
       baseCost: 12000,
       costMultiplier: 1.14,
       effect: 47,
-      owned: 0
+      owned: 0,
+      icon: '⛏️'
     },
     {
       id: 'double_click',
@@ -83,7 +88,8 @@ window.GAME_CONFIG = {
       baseCost: 200,
       costMultiplier: 2,
       effect: 0.05,
-      owned: 0
+      owned: 0,
+      icon: '🖐️'
     },
     {
       id: 'poison_protection',
@@ -92,7 +98,8 @@ window.GAME_CONFIG = {
       baseCost: 500,
       costMultiplier: 3,
       effect: 1,
-      owned: 0
+      owned: 0,
+      icon: '🛡️'
     }
   ]
 };
